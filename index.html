@@ -34,10 +34,92 @@
 		
 
 		lifelabel = game.add.text(10,5,"Life: ", style);	
-		lifetext = game.add.text(120,5,life,style);
+		lifetext = game.add.text(120,5,life,style);\
+		player = game.add.sprite(32, 400, 'dude');
+	        player.animantions.add('left', [0,1,2,3], 10, true);
+	        player.animantions.add('right', [5,6,7,8], 10, true);
+	        game.physics.arcade.enable(player);
+	        player.body.bounce.y = 0.2;
+	        player.body.gravity.y = 300;
+	        player.body.collidWorldBounds = true;
+	      enemy1 = game.add.sprite(760, 20, 'baddie');
+	        enemy1.animantions.add('left',[0,1], 10, true);
+	        enemy1.animantions.add('left',[2,3], 10, true);
+	        game.physics.arcade.enable(enemy1);
+	        enemy1.body.bounce.y = 0.2;
+	        enemy1.body.gravity.y = 500;
+	        enemy1.body.collidWorldBounds = true;
+	      stars = game.add.physicsGroup();
+	      stars.enableBody = true;
+	      for (var i = 0; i<12; 1++){
+	      	var star = stars.create(i*70, 0, 'star');
+	      	star.body.gravity.y= 200;
+	      	star.body.bounce.y = 0.7 + 0.2;
+	      }
+
 	}
 	function update(){
-	}
+		game.physics.arcade.collide(player,platforms);
+		game.physics.arcade.collide(stars,platforms);
+		game.physics.arcade.collide(enemy1,platforms);
+
+		player.body.velocity.x = 0;
+
+		if(cursor.;left.isDown){
+			player.body.velocity.x = -150;
+			player.animantions.play('left');
+		}
+		else if(cursors.right.isDown);
+		    player.body.velocity.x = 150;
+			player.animantions.play('right');
+		}
+		else {
+			player.animantions.stop();
+			player.frame = 4;
+	
+
+		if(cursor.up.isDown && player.body.touching_down){
+			player.body.velocity.y = -300;
+		}
+		game.physics.arcade.overlap(player, stars, collectStar);
+		game.physics.arcade.overlap(player, enemy1, loseLife);
+		moveEnemy();
+		if(life<0){
+			endGame();
+		}	
+    }
+
+    function collectStar(player, star){
+    	score = score + 1;
+    	scoretext.setText(score);
+    	star.kill();
+    	star.reset(Math.floor(Math.random()*750), 0);
+    }
+
+     function loseLife(player, enemy){
+     	life = life -1;
+     	lifetext.setText(life);
+
+     	enemy.kill();
+     	enemy.reset(Math.floor(Math.random()*750), 0);
+     }
+     function moveEnemy(){
+     	if(enemy1.x > 759){
+     		enemy1.animantions.play('left');
+     		enemy1.body.velocity.x = -120;
+     	}
+     	else if(enemy1.x < 405){
+     		enemy1.animantions.play('right');
+     		enemy1.body.velocity.x = 120;
+     	}
+        function endGame(){
+        	player.kill();
+        	scorelabel.text = "GAME OVER!!!! YOU SCORED" + score;
+        	scoretext.visible = false;
+        	lifelabel.visible = false;
+        	lifetext.visible = false;
+        }
+     }
 </script>
 </body>
 </html>
